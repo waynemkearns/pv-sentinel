@@ -6,9 +6,15 @@ from pathlib import Path
 # Add the parent directory to the path so we can import backend modules
 sys.path.append(str(Path(__file__).parent.parent))
 
-from backend.patient_context import PatientContextManager
-from backend.model_tracking import ModelTracker
-from backend.readback import VoiceReadbackManager
+# Import the correct class names from backend modules
+try:
+    from backend.patient_context import PatientContextPreserver
+    from backend.model_tracking import ModelVersionTracker
+    from backend.readback import VoiceReadbackConfirmer
+    backend_available = True
+except ImportError as e:
+    st.warning(f"Backend modules not fully available: {e}")
+    backend_available = False
 
 # Configure Streamlit page
 st.set_page_config(
@@ -48,6 +54,12 @@ st.markdown("""
 def main():
     # Main header
     st.markdown("<h1 class='main-header'>🏥 PV Sentinel - AI-Powered Pharmacovigilance Assistant</h1>", unsafe_allow_html=True)
+    
+    # Backend status indicator
+    if not backend_available:
+        st.error("⚠️ Backend modules not fully loaded. Some features may be limited to demo mode.")
+    else:
+        st.success("✅ All backend modules loaded successfully")
     
     # Safety warning
     st.markdown("""
@@ -131,7 +143,10 @@ def show_case_entry():
     if use_voice:
         st.info("🎤 Voice input feature requires local microphone access. Click 'Start Recording' to begin.")
         if st.button("Start Recording"):
-            st.warning("Voice recording feature requires full backend integration. Currently in demo mode.")
+            if backend_available:
+                st.warning("Voice recording feature requires full backend integration and microphone setup.")
+            else:
+                st.warning("Voice recording feature requires full backend integration. Currently in demo mode.")
     
     # Text input as alternative
     event_description = st.text_area(
@@ -154,13 +169,45 @@ def show_case_entry():
                 
                 # Show patient context preservation
                 st.subheader("Patient Context Preservation Check")
-                st.markdown("""
-                <div class='success-box'>
-                    <h4>✅ Patient Voice Preserved</h4>
-                    <p><strong>Original patient language detected:</strong> "I started feeling dizzy..."</p>
-                    <p><strong>Context strength:</strong> 95% - Excellent preservation</p>
-                </div>
-                """, unsafe_allow_html=True)
+                
+                if backend_available:
+                    # Try to use real backend for context preservation demo
+                    try:
+                        # Create a demo config
+                        demo_config = {
+                            'patient_safety': {
+                                'context_preservation': True,
+                                'context_validation': True
+                            }
+                        }
+                        
+                        # Initialize patient context preserver
+                        context_preserver = PatientContextPreserver(demo_config)
+                        
+                        # Extract patient context
+                        patient_context = context_preserver.extract_patient_context(
+                            event_description, 
+                            "typed" if not use_voice else "voice"
+                        )
+                        
+                        # Show real context analysis
+                        st.markdown(f"""
+                        <div class='success-box'>
+                            <h4>✅ Patient Voice Preserved (Real Analysis)</h4>
+                            <p><strong>Patient voice indicators found:</strong> {len(patient_context.patient_voice_indicators)}</p>
+                            <p><strong>Key patient expressions:</strong> {'; '.join(patient_context.patient_voice_indicators[:3]) if patient_context.patient_voice_indicators else 'None detected'}</p>
+                            <p><strong>Emotional context:</strong> {patient_context.emotional_context or 'None detected'}</p>
+                            <p><strong>Input method:</strong> {patient_context.input_method}</p>
+                            <p><strong>Context validation:</strong> {'✅ Passed' if all(patient_context.validation_flags.values()) else '⚠️ Review needed'}</p>
+                        </div>
+                        """, unsafe_allow_html=True)
+                        
+                    except Exception as e:
+                        st.error(f"Error using backend context preservation: {e}")
+                        # Fall back to demo mode
+                        show_demo_context_preservation()
+                else:
+                    show_demo_context_preservation()
                 
                 # Show generated narrative
                 st.subheader("Generated Narrative")
@@ -174,9 +221,24 @@ Patient Safety Assessment: The patient's direct account has been preserved to ma
                 st.text_area("AI-Generated Narrative", value=sample_narrative, height=200)
                 
                 # Model tracking info
-                st.info("📊 Model Version: Mistral-7B-v1.2.3 | Generation ID: MVG-2024-001 | Audit Trail: Complete")
+                if backend_available:
+                    st.info("📊 Model Version: Mistral-7B-v1.2.3 | Generation ID: MVG-2024-001 | Audit Trail: Complete | Backend: Active")
+                else:
+                    st.info("📊 Model Version: Mistral-7B-v1.2.3 | Generation ID: MVG-2024-001 | Audit Trail: Complete | Backend: Demo Mode")
         else:
             st.error("Please provide an event description to generate the narrative.")
+
+def show_demo_context_preservation():
+    """Show demo context preservation when backend is not available"""
+    st.markdown("""
+    <div class='success-box'>
+        <h4>✅ Patient Voice Preserved (Demo Mode)</h4>
+        <p><strong>Original patient language detected:</strong> "I started feeling dizzy..."</p>
+        <p><strong>Context strength:</strong> 95% - Excellent preservation</p>
+        <p><strong>Voice indicators:</strong> First-person language, temporal descriptions</p>
+        <p><strong>Note:</strong> Full backend integration provides detailed context analysis</p>
+    </div>
+    """, unsafe_allow_html=True)
 
 def show_case_review():
     st.header("Case Review Dashboard")
