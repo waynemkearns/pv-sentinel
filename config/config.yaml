@@ -1,0 +1,123 @@
+# PV Sentinel MVP Configuration
+# All improvements must NOT degrade existing validated functionality
+
+system:
+  logging_level: "DEBUG"
+  audit_mode: true
+  validation_mode: false
+  app_name: "PV Sentinel"
+  version: "1.0.0-MVP"
+  environment: "local"
+
+# Model Configuration
+models:
+  primary_model: "mistral-7b-instruct"
+  model_path: "models/mistral-7b-instruct-v0.1.Q4_K_M.gguf"
+  prompt_directory: "prompts/"
+  model_hash_tracking: true
+  version_control: true
+  max_tokens: 2048
+  temperature: 0.3
+  top_p: 0.9
+  context_length: 4096
+
+# Speech-to-Text Configuration
+stt:
+  model: "whisper.cpp"
+  model_path: "models/ggml-base.en.bin"
+  language: "en"
+  enable_readback: true
+  confirmation_required: false
+
+# RAG (Retrieval-Augmented Generation) Settings
+rag:
+  engine: "langchain"
+  vector_store: "chromadb"
+  document_path: "documents/"
+  chunk_size: 1000
+  chunk_overlap: 200
+  similarity_threshold: 0.7
+  max_documents: 5
+
+# User Management and Roles
+users:
+  multi_user_support: true
+  role_based_access: true
+  audit_trail: true
+  roles:
+    - drafter
+    - reviewer
+    - auditor
+    - admin
+  session_timeout: 3600  # seconds
+
+# Patient Safety Features (Critical P0 Requirements)
+patient_safety:
+  context_preservation: true
+  voice_confirmation: true
+  narrative_comparison: true
+  patient_story_field: true
+  context_validation: true
+
+# Database Configuration
+database:
+  type: "sqlite"
+  path: "storage/pv_sentinel.db"
+  backup_enabled: true
+  retention_days: 2555  # 7 years for GxP compliance
+
+# Export Settings
+export:
+  formats: ["pdf", "json", "xml"]
+  include_metadata: true
+  include_audit_trail: true
+  digital_signature: false  # Future enhancement
+
+# Regulatory Compliance
+regulatory:
+  gvp_alignment: true
+  faers_compliance: true
+  medra_version: "26.0"
+  e2b_r3_support: false  # Future enhancement
+  psur_module: false     # Future enhancement
+
+# Security and Privacy
+security:
+  local_only: true
+  gdpr_compliant: true
+  encryption_at_rest: true
+  session_encryption: true
+  data_anonymization: true
+  consent_tracking: true
+
+# Validation and Quality Assurance
+validation:
+  gamp5_aligned: true
+  prompt_locking: true
+  change_control: true
+  automated_testing: true
+  validation_protocols: "validation/"
+
+# Frontend Configuration
+frontend:
+  framework: "streamlit"
+  theme: "light"
+  auto_refresh: false
+  max_file_size: 10  # MB
+
+# Logging and Monitoring
+logging:
+  level: "INFO"
+  file: "logs/pv_sentinel.log"
+  max_size: 100  # MB
+  backup_count: 5
+  include_timestamps: true
+  include_user_actions: true
+  include_model_metadata: true
+
+# Performance Settings
+performance:
+  max_concurrent_users: 10
+  response_timeout: 30  # seconds
+  cache_enabled: true
+  cache_ttl: 3600  # seconds 

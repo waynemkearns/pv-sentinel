@@ -1,0 +1,102 @@
+# PV Sentinel - Git Ignore File
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+.env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Models (large files - download separately)
+models/*.gguf
+models/*.bin
+models/*.safetensors
+
+# Storage and Data
+storage/*.db
+storage/*.sqlite
+storage/users.json
+storage/sessions.json
+storage/backups/
+
+# Logs
+logs/*.log
+*.log
+
+# Temporary files
+temp/
+tmp/
+*.tmp
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Test coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Jupyter Notebooks
+.ipynb_checkpoints
+
+# Documentation builds
+docs/_build/
+docs/build/
+
+# Validation artifacts (generated during testing)
+validation/test_results/
+validation/artifacts/
+
+# Audio files (temporary)
+*.wav
+*.mp3
+*.m4a
+
+# Export files
+exports/
+*.pdf
+*.xml
+
+# Security - never commit these
+config/secrets.yaml
+*.key
+*.pem
+certificates/
+
+# Development
+.python-version
+.tool-versions
+
+# Models metadata (may contain hashes - keep tracked)
+# validation/model_metadata.json - This should be tracked for validation 

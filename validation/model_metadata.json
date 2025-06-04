@@ -1,0 +1,19 @@
+{
+  "models": {
+    "8cf3a78cc64a1d9952a895d574d82ce37ad3b4328893e97dff9611fe3e52706d": {
+      "model_name": "test-model",
+      "model_path": "C:\\Users\\wayne\\AppData\\Local\\Temp\\tmpk1yzy_hz.gguf",
+      "model_hash": "8cf3a78cc64a1d9952a895d574d82ce37ad3b4328893e97dff9611fe3e52706d",
+      "model_version": "1.0",
+      "quantization": "unknown",
+      "parameters": {
+        "file_size": 18,
+        "format": ".gguf",
+        "estimated_parameters": "7B"
+      },
+      "creation_timestamp": "2025-06-04T15:31:27.862059",
+      "validation_status": "registered",
+      "gxp_qualified": false
+    }
+  }
+}

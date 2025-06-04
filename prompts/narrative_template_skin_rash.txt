@@ -1,0 +1,18 @@
+Draft a concise and regulatory-compliant narrative for a patient who developed a skin rash. Include:
+
+- Patient Age: {patient_age}
+- Suspect Drug: {drug}
+- Reaction: Skin Rash
+- Onset Timing: {onset_date}
+- Reporter Comments: {reporter_comments}
+- Outcome: {outcome}
+
+Mention any predisposing conditions, suspected causality, or dechallenge information.
+
+The narrative should address:
+1. Description of the rash (appearance, distribution, severity)
+2. Temporal relationship to suspected drug
+3. Any concomitant medications or allergies
+4. Treatment provided for the rash
+5. Resolution status and time to recovery
+6. Likelihood of drug causality 

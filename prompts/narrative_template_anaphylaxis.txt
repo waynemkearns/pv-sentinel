@@ -1,0 +1,18 @@
+Generate a clear and medically accurate narrative for an adverse event report involving anaphylaxis. Use the following details:
+
+- Patient Age: {patient_age}
+- Suspect Drug: {drug}
+- Reaction: Anaphylaxis
+- Onset Date: {onset_date}
+- Seriousness: {seriousness}
+- Outcome: {outcome}
+- Reporter Comments: {reporter_comments}
+
+Explain the course of the event, clinical interventions (if any), and recovery status. Reference relevant MedDRA terms and include source traceability if available.
+
+Ensure the narrative includes:
+1. Clear temporal relationship between drug administration and reaction onset
+2. Description of anaphylactic symptoms (cardiovascular, respiratory, dermatological)
+3. Any emergency treatment provided
+4. Current patient status and recovery
+5. Assessment of causality and expectedness 

@@ -1,0 +1,22 @@
+Create a structured narrative for a case involving suspected hepatic injury. Include:
+
+- Patient Age: {patient_age}
+- Suspect Drug: {drug}
+- Reaction: Elevated liver enzymes (ALT/AST)
+- Lab Results: {lab_results}
+- Onset Date: {onset_date}
+- Seriousness: {seriousness}
+- Relevant History: {medical_history}
+- Outcome: {outcome}
+
+Indicate whether Hy's Law criteria may be met. Discuss rechallenge or other interventions.
+
+The narrative must include:
+1. Baseline liver function status (if known)
+2. Specific laboratory values and timing
+3. Clinical symptoms of hepatotoxicity (if any)
+4. Assessment against Hy's Law criteria (ALT ≥3x ULN + Total bilirubin ≥2x ULN)
+5. Drug discontinuation and dechallenge response
+6. Any rechallenge information
+7. Alternative causes ruled out
+8. Current liver function status 
