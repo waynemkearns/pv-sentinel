@@ -21,7 +21,11 @@ from .patient_context import create_patient_context_preserver, PatientContext
 from .model_tracking import create_model_tracker, GenerationMetadata
 from .readback import create_readback_confirmer, VoiceCapture, ReadbackSession
 from .users import create_user_manager, UserSession
+# Phase 1 features
 from .pii_protection import create_pii_protector, PIIMasker, AccessLogger
+# Phase 2 features
+from .patient_voice import create_patient_voice_protector, PatientVoiceExtractor, PatientVoiceProtector
+from .narrative_comparison import create_narrative_comparison_system, NarrativeVersionManager
 
 logger = logging.getLogger(__name__)
 
@@ -98,8 +102,14 @@ class PVSentinelEngine:
             # Initialize User Manager (P1 High)
             self.user_manager = create_user_manager(self.config)
             
-            # Initialize PII Protection (Phase 1 New Feature)
+            # Initialize PII Protection (Phase 1 Feature)
             self.pii_masker, self.access_logger = create_pii_protector(self.config)
+            
+            # Initialize Patient Voice Protection (Phase 2 Feature)
+            self.patient_voice_extractor, self.patient_voice_protector = create_patient_voice_protector(self.config)
+            
+            # Initialize Narrative Comparison System (Phase 2 Feature)
+            self.narrative_version_manager = create_narrative_comparison_system(self.config)
             
             # Initialize prompt templates
             self.prompt_templates = self._load_prompt_templates()
@@ -179,6 +189,22 @@ class PVSentinelEngine:
                 voice_capture.input_method
             )
             
+            # Step 3a: Extract and protect patient voice fragments (Phase 2 Feature)
+            patient_voice_fragments = self.patient_voice_extractor.extract_patient_voice(
+                voice_capture.transcribed_text,
+                f"user_{user_session.user_id}",
+                voice_capture.input_method.value if hasattr(voice_capture.input_method, 'value') else "voice_recording"
+            )
+            
+            # Create protected patient voice record if fragments found
+            patient_voice_record = None
+            if patient_voice_fragments:
+                patient_voice_record = self.patient_voice_protector.create_protected_record(
+                    case_id=f"CASE-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
+                    fragments=patient_voice_fragments,
+                    created_by=user_session.user_id
+                )
+            
             # Step 4: Check if readback confirmation is needed (P0 Critical)
             should_readback, readback_reason = self.readback_confirmer.should_trigger_readback(voice_capture)
             
@@ -194,6 +220,15 @@ class PVSentinelEngine:
                 user_session_id,
                 readback_session
             )
+            
+            # Step 5a: Create initial narrative version (Phase 2 Feature)
+            if narrative_result.get('generated_narrative'):
+                narrative_version = self.narrative_version_manager.create_new_version(
+                    case_id=patient_voice_record.case_id if patient_voice_record else f"CASE-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
+                    narrative_content=narrative_result['generated_narrative'],
+                    created_by=user_session.user_id,
+                    version_type="draft"
+                )
             
             # Step 6: Apply PII protection to narrative (Phase 1 New Feature)
             user_role = user_session.role.value if user_session.role else None
@@ -222,7 +257,12 @@ class PVSentinelEngine:
                 'narrative': narrative_result,
                 'audit_record': audit_record,
                 'requires_readback': should_readback,
-                'readback_reason': readback_reason
+                'readback_reason': readback_reason,
+                # Phase 2 additions
+                'patient_voice_record': patient_voice_record,
+                'patient_voice_fragments': len(patient_voice_fragments),
+                'narrative_version': narrative_version.version_id if 'narrative_version' in locals() else None,
+                'pii_protection_applied': True
             }
             
         except Exception as e:

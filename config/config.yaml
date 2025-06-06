@@ -92,17 +92,100 @@ security:
   mask_pii: true
   retain_patient_context: true
 
-# PII Protection Configuration (New Phase 1 Feature)
+# PII Protection Configuration (Phase 1 Feature)
 pii_protection:
+  protection_enabled: true
+  auto_detection: true
+  role_based_masking: true
+  access_logging: true
+  anonymization_enabled: true
   detection_threshold: 0.7
   mask_in_logs: true
   mask_in_exports: false
   custom_patterns: []
-  role_based_masking:
-    auditor: ["name", "address", "phone"]
-    readonly: ["name", "date_of_birth", "address", "phone", "email"]
-    drafter: []
-    reviewer: []
+  
+  # Enhanced role-based masking rules
+  role_masking:
+    auditor:
+      mask_names: false
+      mask_addresses: true
+      mask_phones: true
+      mask_emails: true
+      mask_dates: false
+      mask_mrns: true
+    readonly:
+      mask_names: true
+      mask_addresses: true
+      mask_phones: true
+      mask_emails: true
+      mask_dates: true
+      mask_mrns: true
+    drafter:
+      mask_names: false
+      mask_addresses: true
+      mask_phones: true
+      mask_emails: false
+      mask_dates: false
+      mask_mrns: false
+    reviewer:
+      mask_names: false
+      mask_addresses: false
+      mask_phones: false
+      mask_emails: false
+      mask_dates: false
+      mask_mrns: false
+
+# Patient Voice Protection Configuration (Phase 2 Feature)
+patient_voice:
+  protection_enabled: true
+  extraction_threshold: 0.7
+  auto_lock_enabled: true
+  log_modification_attempts: true
+  
+  # Voice extraction settings
+  extraction:
+    include_direct_quotes: true
+    include_reported_speech: true
+    include_emotional_expressions: true
+    include_temporal_expressions: true
+    minimum_fragment_length: 5
+    maximum_fragments_per_case: 50
+  
+  # Protection levels
+  protection_levels:
+    read_only: "Cannot be modified by anyone"
+    protected: "Can be annotated by humans but not modified by AI"
+    locked: "Completely immutable with integrity verification"
+
+# Narrative Comparison Configuration (Phase 2 Feature)
+narrative_comparison:
+  enabled: true
+  auto_severity: true
+  require_justification: true
+  clinical_terms_file: "config/clinical_terms.json"
+  
+  # Comparison settings
+  comparison:
+    enable_line_diff: true
+    enable_word_diff: true
+    context_window: 3
+    highlight_clinical_changes: true
+    auto_categorize_changes: true
+  
+  # Review requirements
+  review_requirements:
+    critical_changes_require_review: true
+    significant_changes_threshold: 3
+    require_justification_for_severity: ["critical", "significant"]
+    auto_flag_medication_changes: true
+    auto_flag_temporal_changes: true
+  
+  # Version management
+  versioning:
+    max_versions_per_case: 50
+    auto_create_backup: true
+    enable_rollback: true
+    lock_final_versions: true
 
 # Validation and Quality Assurance
 validation:

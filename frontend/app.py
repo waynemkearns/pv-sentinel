@@ -11,6 +11,11 @@ try:
     from backend.patient_context import PatientContextPreserver
     from backend.model_tracking import ModelVersionTracker
     from backend.readback import VoiceReadbackConfirmer
+    # Phase 1 imports
+    from backend.pii_protection import create_pii_protection_system
+    # Phase 2 imports
+    from backend.patient_voice import create_patient_voice_protector
+    from backend.narrative_comparison import create_narrative_comparison_system
     backend_available = True
 except ImportError as e:
     st.warning(f"Backend modules not fully available: {e}")
@@ -99,7 +104,7 @@ def main():
         
         page = st.selectbox(
             "Choose Function",
-            ["Home", "New Case Entry", "Case Review", "System Status", "Documentation"]
+            ["Home", "New Case Entry", "Case Review", "Patient Voice Protection", "Narrative Comparison", "System Status", "Documentation"]
         )
     
     # Main content based on selected page
@@ -109,6 +114,10 @@ def main():
         show_case_entry(user_role)
     elif page == "Case Review":
         show_case_review(user_role)
+    elif page == "Patient Voice Protection":
+        show_patient_voice_protection(user_role)
+    elif page == "Narrative Comparison":
+        show_narrative_comparison(user_role)
     elif page == "System Status":
         show_system_status()
     elif page == "Documentation":
@@ -378,6 +387,267 @@ def show_documentation():
     
     st.subheader("Contact & Support")
     st.info("For technical support or questions about patient safety features, refer to the comprehensive user guide documentation.")
+
+def show_patient_voice_protection(user_role: str = "drafter"):
+    """Display Patient Voice Protection interface (Phase 2 Feature)"""
+    st.header("🗣️ Patient Voice Protection")
+    
+    # Patient safety notice
+    st.markdown("""
+    <div style='background-color: #d1ecf1; border: 1px solid #bee5eb; border-radius: 5px; padding: 15px; margin: 15px 0;'>
+        <h4>🛡️ Patient Voice Protection System</h4>
+        <p><strong>Critical P0 Feature:</strong> Preserves authentic patient voice that AI cannot modify</p>
+        <ul>
+            <li>Protects direct patient quotes from AI modification</li>
+            <li>Maintains emotional context and patient language</li>
+            <li>Provides audit trail for patient voice integrity</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Demo case selection
+    st.subheader("Select Case for Patient Voice Analysis")
+    demo_cases = {
+        "CASE-001": "Patient dizzy after medication",
+        "CASE-002": "Allergic reaction to antibiotic", 
+        "CASE-003": "Severe headache post-vaccination"
+    }
+    
+    selected_case = st.selectbox("Case ID", list(demo_cases.keys()), format_func=lambda x: f"{x}: {demo_cases[x]}")
+    
+    if selected_case:
+        st.subheader("🔍 Patient Voice Fragments Detected")
+        
+        # Demo patient voice fragments
+        demo_fragments = {
+            "CASE-001": [
+                {
+                    "id": "PVF-12345678-abcd",
+                    "text": "I started feeling really dizzy about 2 hours after I took the pill",
+                    "type": "Direct Quote",
+                    "confidence": 0.95,
+                    "emotional_indicators": ["dizzy"],
+                    "protection_level": "Protected"
+                },
+                {
+                    "id": "PVF-87654321-efgh", 
+                    "text": "It felt like the room was spinning and I had to sit down",
+                    "type": "Reported Speech",
+                    "confidence": 0.82,
+                    "emotional_indicators": ["spinning"],
+                    "protection_level": "Protected"
+                }
+            ]
+        }
+        
+        fragments = demo_fragments.get(selected_case, [])
+        
+        for i, fragment in enumerate(fragments):
+            with st.expander(f"Fragment {i+1}: {fragment['text'][:50]}...", expanded=True):
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    st.write(f"**Fragment ID:** {fragment['id']}")
+                    st.write(f"**Type:** {fragment['type']}")
+                    st.write(f"**Confidence:** {fragment['confidence']:.2%}")
+                    st.write(f"**Protection Level:** {fragment['protection_level']}")
+                
+                with col2:
+                    st.write(f"**Full Text:**")
+                    st.markdown(f"*\"{fragment['text']}\"*")
+                    st.write(f"**Emotional Indicators:** {', '.join(fragment['emotional_indicators'])}")
+                
+                # Protection status indicator
+                if fragment['protection_level'] == "Protected":
+                    st.success("🔒 This patient voice fragment is protected from AI modification")
+                
+                # Action buttons
+                col3, col4, col5 = st.columns(3)
+                with col3:
+                    if st.button(f"Add Annotation", key=f"annotate_{i}"):
+                        st.text_area("Human Annotation", key=f"annotation_{i}", 
+                                   placeholder="Add clarification or context...")
+                
+                with col4:
+                    if st.button(f"Mark as Verified", key=f"verify_{i}"):
+                        st.success("✅ Fragment marked as verified")
+                
+                with col5:
+                    if st.button(f"Flag for Review", key=f"flag_{i}"):
+                        st.warning("⚠️ Fragment flagged for medical review")
+        
+        # Summary statistics
+        st.subheader("📊 Patient Voice Summary")
+        
+        col1, col2, col3, col4 = st.columns(4)
+        with col1:
+            st.metric("Total Fragments", len(fragments))
+        with col2:
+            st.metric("Protected Fragments", len([f for f in fragments if f['protection_level'] == 'Protected']))
+        with col3:
+            avg_confidence = sum(f['confidence'] for f in fragments) / len(fragments) if fragments else 0
+            st.metric("Avg. Confidence", f"{avg_confidence:.1%}")
+        with col4:
+            emotional_count = sum(len(f['emotional_indicators']) for f in fragments)
+            st.metric("Emotional Indicators", emotional_count)
+
+def show_narrative_comparison(user_role: str = "reviewer"):
+    """Display Narrative Comparison interface (Phase 2 Feature)"""
+    st.header("📋 Narrative Comparison & Version Control")
+    
+    # Feature description
+    st.markdown("""
+    <div style='background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 5px; padding: 15px; margin: 15px 0;'>
+        <h4>🔍 Side-by-Side Narrative Comparison</h4>
+        <p><strong>Critical P0 Feature:</strong> Track all narrative changes with justification requirements</p>
+        <ul>
+            <li>Draft vs Final comparison with diff highlighting</li>
+            <li>Clinical impact assessment for each change</li>
+            <li>Edit justification tracking for compliance</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Demo version selection
+    st.subheader("Select Narrative Versions to Compare")
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        version_1 = st.selectbox("Version 1 (Baseline)", 
+                                ["Draft v1.0", "Review v1.1", "Final v1.2"])
+    with col2:
+        version_2 = st.selectbox("Version 2 (Comparison)", 
+                                ["Review v1.1", "Final v1.2", "Locked v1.3"])
+    
+    if st.button("Generate Comparison", type="primary"):
+        st.subheader("📊 Comparison Summary")
+        
+        # Demo comparison statistics
+        col1, col2, col3, col4 = st.columns(4)
+        with col1:
+            st.metric("Total Changes", "7", delta="3 new")
+        with col2:
+            st.metric("Critical Changes", "1", delta="1 critical", delta_color="inverse")
+        with col3:
+            st.metric("Significant Changes", "3", delta="2 significant", delta_color="normal")
+        with col4:
+            st.metric("Review Required", "Yes", delta="Medical review needed")
+        
+        # Change details
+        st.subheader("🔍 Detailed Change Analysis")
+        
+        demo_changes = [
+            {
+                "id": "NC-12345678-abcd",
+                "section": "Timeline",
+                "type": "Addition",
+                "severity": "Critical", 
+                "original": "",
+                "modified": "Patient was hospitalized for 3 days",
+                "justification": "Added critical hospitalization information",
+                "impact": "Significant clinical outcome change",
+                "requires_review": True
+            },
+            {
+                "id": "NC-87654321-efgh",
+                "section": "Symptoms", 
+                "type": "Modification",
+                "severity": "Significant",
+                "original": "Patient felt dizzy",
+                "modified": "Patient experienced severe dizziness requiring assistance",
+                "justification": "Clarified severity level based on additional information",
+                "impact": "Enhanced symptom description accuracy",
+                "requires_review": True
+            },
+            {
+                "id": "NC-11111111-ijkl",
+                "section": "Assessment",
+                "type": "Style Change", 
+                "severity": "Minor",
+                "original": "The patient's condition improved gradually",
+                "modified": "Patient condition showed gradual improvement",
+                "justification": "Style consistency improvement",
+                "impact": "No clinical impact",
+                "requires_review": False
+            }
+        ]
+        
+        for i, change in enumerate(demo_changes):
+            with st.expander(f"Change {i+1}: {change['section']} - {change['severity']}", expanded=True):
+                # Change header
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    st.write(f"**Change ID:** {change['id']}")
+                    st.write(f"**Section:** {change['section']}")
+                with col2:
+                    st.write(f"**Type:** {change['type']}")
+                    severity_color = {"Critical": "🔴", "Significant": "🟡", "Minor": "🟢", "Style Change": "🔵"}
+                    st.write(f"**Severity:** {severity_color.get(change['severity'], '')} {change['severity']}")
+                with col3:
+                    st.write(f"**Review Required:** {'✅ Yes' if change['requires_review'] else '❌ No'}")
+                
+                # Before/After comparison
+                st.write("**Content Comparison:**")
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    st.markdown("**Original:**")
+                    if change['original']:
+                        st.markdown(f"<div style='background-color: #ffebee; padding: 10px; border-radius: 5px;'>{change['original']}</div>", unsafe_allow_html=True)
+                    else:
+                        st.markdown("<div style='background-color: #f5f5f5; padding: 10px; border-radius: 5px; font-style: italic;'>[No original content]</div>", unsafe_allow_html=True)
+                
+                with col2:
+                    st.markdown("**Modified:**")
+                    st.markdown(f"<div style='background-color: #e8f5e8; padding: 10px; border-radius: 5px;'>{change['modified']}</div>", unsafe_allow_html=True)
+                
+                # Justification and impact
+                st.write(f"**Justification:** {change['justification']}")
+                st.write(f"**Clinical Impact:** {change['impact']}")
+                
+                # Action buttons for reviewers
+                if user_role in ["reviewer", "admin"]:
+                    col1, col2, col3 = st.columns(3)
+                    with col1:
+                        if st.button(f"Approve Change", key=f"approve_{i}"):
+                            st.success("✅ Change approved")
+                    with col2:
+                        if st.button(f"Request Clarification", key=f"clarify_{i}"):
+                            st.warning("⚠️ Clarification requested")
+                    with col3:
+                        if st.button(f"Reject Change", key=f"reject_{i}"):
+                            st.error("❌ Change rejected")
+        
+        # Overall assessment
+        st.subheader("📝 Overall Narrative Assessment")
+        
+        st.markdown("""
+        <div style='background-color: #fff3cd; border: 1px solid #ffeaa7; border-radius: 5px; padding: 15px; margin: 15px 0;'>
+            <h5>🔍 Clinical Impact Assessment</h5>
+            <p><strong>HIGH IMPACT:</strong> 1 critical change detected affecting clinical meaning</p>
+            <p><strong>Recommendation:</strong> Medical review required before final approval</p>
+            <p><strong>Key Changes:</strong> Added hospitalization information, enhanced symptom severity description</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Medical review section
+        if user_role in ["reviewer", "admin"]:
+            st.subheader("🩺 Medical Review")
+            
+            review_decision = st.radio(
+                "Review Decision",
+                ["Approve all changes", "Approve with modifications", "Reject and request revision"],
+                help="Medical reviewer decision for narrative changes"
+            )
+            
+            review_comments = st.text_area(
+                "Review Comments",
+                placeholder="Provide detailed comments on the clinical accuracy and completeness of the narrative changes..."
+            )
+            
+            if st.button("Submit Medical Review", type="primary"):
+                st.success(f"✅ Medical review submitted: {review_decision}")
+                st.info("📧 Notification sent to case drafter and PV officer")
 
 if __name__ == "__main__":
     main() 
