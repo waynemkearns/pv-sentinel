@@ -89,6 +89,20 @@ security:
   session_encryption: true
   data_anonymization: true
   consent_tracking: true
+  mask_pii: true
+  retain_patient_context: true
+
+# PII Protection Configuration (New Phase 1 Feature)
+pii_protection:
+  detection_threshold: 0.7
+  mask_in_logs: true
+  mask_in_exports: false
+  custom_patterns: []
+  role_based_masking:
+    auditor: ["name", "address", "phone"]
+    readonly: ["name", "date_of_birth", "address", "phone", "email"]
+    drafter: []
+    reviewer: []
 
 # Validation and Quality Assurance
 validation:

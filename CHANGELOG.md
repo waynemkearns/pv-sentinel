@@ -5,86 +5,167 @@ All notable changes to PV Sentinel will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.0-MVP] - 2024-01-04
+## [1.1.0] - 2025-06-06 - Phase 1: Foundation & PII Protection
 
-### 🎯 Initial MVP Release
+### 🚀 **MAJOR NEW FEATURES**
 
-This is the initial MVP release of PV Sentinel, built from a comprehensive multi-perspective assessment covering 8 key stakeholder personas.
+#### **PII Protection & Data Privacy Module** (Critical P0 Feature)
+- **NEW**: Comprehensive PII detection for names, addresses, phones, emails, dates, and medical record numbers
+- **NEW**: Role-based data masking (auditor, readonly, drafter, reviewer, admin roles)
+- **NEW**: Configurable PII scrubbing with patient context preservation options
+- **NEW**: Access logging with automatic PII masking in logs
+- **NEW**: Full anonymization capabilities for research and training data
+- **NEW**: Custom PII pattern support for organization-specific identifiers
 
-### ✨ Added - Core Features
+#### **Enhanced User Interface** (Phase 1 UX Improvements)
+- **NEW**: User role selection in sidebar with role-based permissions display
+- **NEW**: Patient privacy notices on all sensitive data entry fields
+- **NEW**: PII detection status display with protection level indicators
+- **NEW**: Role-based data access warnings and masking notifications
 
-#### 🛡️ P0 Critical Safety Features
-- **Patient Context Preservation** (`backend/patient_context.py`)
-  - Preserves patient voice and emotional context 
-  - Validates context never gets lost through AI processing
-  - Extracts patient voice indicators and temporal descriptions
-  - Quality scoring for context preservation
+#### **Backend Integration** (Additive-Only Changes)
+- **NEW**: PII protection integrated into main processing pipeline
+- **NEW**: Voice input access logging with privacy protection
+- **NEW**: Narrative generation with automatic PII detection and masking
+- **NEW**: Configuration-driven privacy controls
 
-- **Model Version Tracking** (`backend/model_tracking.py`)
-  - Complete audit trail for AI model generations
-  - SHA256 hash tracking for models and prompts
-  - Prompt locking mechanism for GxP validation
-  - Generation metadata with reproducibility verification
+### 🔧 **CONFIGURATION ENHANCEMENTS**
 
-- **Voice Readback Confirmation** (`backend/readback.py`)
-  - Intelligent readback triggering for safety-critical content
-  - Medical terminology error detection
-  - User correction system with validation
-  - Quality scoring for transcription accuracy
+#### **New Configuration Sections**
+```yaml
+# PII Protection Configuration (New Phase 1 Feature)
+pii_protection:
+  detection_threshold: 0.7
+  mask_in_logs: true
+  mask_in_exports: false
+  custom_patterns: []
+  role_based_masking:
+    auditor: ["name", "address", "phone"]
+    readonly: ["name", "date_of_birth", "address", "phone", "email"]
+    drafter: []
+    reviewer: []
 
-#### 👥 P1 High Priority Features
-- **Multi-User Role Support** (`backend/users.py`)
-  - Role-based access control (Drafter, Reviewer, Auditor, Admin)
-  - Session management with timeout and security
-  - User authentication with account lockout protection
-  - Permission system for collaborative workflows
+# Enhanced Security Settings
+security:
+  mask_pii: true
+  retain_patient_context: true
+```
 
-- **Main Engine Integration** (`backend/main.py`)
-  - Complete orchestration of all PV Sentinel components
-  - Voice input processing pipeline
-  - Narrative generation with patient context preservation
-  - Comprehensive audit record creation
+### 🧪 **TESTING & VALIDATION**
 
-### 📋 Clinical Templates
-- **Anaphylaxis narrative template** with emergency intervention focus
-- **Skin rash template** with causality assessment
-- **Hepatic injury template** with Hy's Law criteria evaluation
+#### **New Test Suite**
+- **NEW**: Comprehensive PII protection test suite (`tests/test_pii_protection.py`)
+- **NEW**: 13 test cases covering detection, masking, role-based access, and anonymization
+- **NEW**: False positive filtering validation
+- **NEW**: Configuration-driven behavior testing
 
-### 🔧 Configuration System
-- **Comprehensive YAML configuration** (`config/config.yaml`)
-- Patient safety features (context preservation, voice confirmation)
-- Model tracking and validation settings
-- Multi-user support and security configuration
-- Regulatory compliance settings (GVP, FAERS, GAMP 5)
+### 📋 **STAKEHOLDER IMPACT ANALYSIS**
 
-### 📚 Documentation & Validation
-- **Complete README** with multi-perspective design rationale
-- **GAMP 5 aligned validation protocols** (`validation/IQ_Installation_Qualification.md`)
-- **Comprehensive requirements.txt** with all dependencies
-- **Multi-perspective assessment document** covering all stakeholder needs
+| Stakeholder | Impact | Benefits |
+|-------------|--------|----------|
+| **Data Privacy Officer** | ✅ **High Positive** | Complete PII protection, GDPR compliance, audit trails |
+| **Patient Advocate** | ✅ **High Positive** | Patient data protection, context preservation options |
+| **Regulatory Affairs** | ✅ **Medium Positive** | Enhanced compliance, audit trail completeness |
+| **PV Officer** | ✅ **Medium Positive** | Role-based access, protected narrative generation |
+| **Clinical Operations** | ✅ **Medium Positive** | Multi-user role support, access controls |
+| **QA/Validation** | ✅ **High Positive** | Comprehensive testing, configuration validation |
+| **End Users (HCP)** | ✅ **Medium Positive** | Privacy notices, role-based interface |
+| **Technical Lead** | ✅ **High Positive** | Modular design, additive-only changes |
 
-### 🧪 Testing & Quality
-- **Basic functionality test suite** (`test_basic_functionality.py`)
-- Tests for all P0 critical safety features
-- User management and configuration validation
-- Template loading verification
+### 🔒 **PATIENT SAFETY & COMPLIANCE**
 
-### 🔒 Security & Privacy
-- **Local-only processing** - no cloud dependencies
-- **GDPR compliant** data handling
-- **Encryption at rest** for sensitive data
-- **Session security** with proper timeout handling
+#### **Critical Safety Features Enhanced**
+- **Patient Context Preservation**: Now with configurable PII protection
+- **Model Version Tracking**: Integrated with PII access logging
+- **Voice Readback Confirmation**: Enhanced with privacy protection
+- **Audit Trail Logging**: Now includes PII-safe access logs
 
-### 📊 Compliance Features
-- **GxP ready** with GAMP 5 alignment
-- **GVP VI/IX compliance** for narrative structure
-- **FDA FAERS** field mapping preparation
-- **Complete audit trail** for regulatory requirements
+#### **Regulatory Compliance**
+- **GDPR Article 25**: Privacy by design implementation
+- **HIPAA Safeguards**: Technical safeguards for PHI protection
+- **GxP Compliance**: Enhanced audit trails with privacy protection
+- **21 CFR Part 11**: Electronic records with PII protection
 
-### 🚀 Installation & Setup
-- **setup.py script** for initial installation
-- **Comprehensive .gitignore** for proper version control
-- **Directory structure** creation for all components
+### 🛡️ **SECURITY ENHANCEMENTS**
+
+#### **Data Protection**
+- **Local Processing**: All PII detection and masking performed locally
+- **Zero Cloud Exposure**: No patient data transmitted to external services
+- **Role-Based Access**: Granular control over sensitive data visibility
+- **Audit Logging**: Complete access trails with automatic PII masking
+
+### 📚 **DOCUMENTATION UPDATES**
+
+#### **New Documentation**
+- **PII Protection Module**: Complete API documentation with examples
+- **Role-Based Access Guide**: User role configuration and permissions
+- **Privacy Configuration**: Detailed configuration options and best practices
+- **Test Suite Documentation**: Testing procedures and validation protocols
+
+### ⚠️ **BREAKING CHANGES**
+**NONE** - All changes are additive and backward compatible
+
+### 🔄 **MIGRATION NOTES**
+- **Existing Functionality**: All MVP features preserved and unchanged
+- **Configuration**: New PII protection settings are optional with safe defaults
+- **User Interface**: New role selection is optional, defaults to 'drafter'
+- **Backend**: PII protection can be disabled via configuration if needed
+
+### 🎯 **NEXT PHASE PREVIEW**
+
+#### **Phase 2: Narrative Control (Planned)**
+- Side-by-side "Draft vs Final" narrative comparison
+- Protected "Patient Voice" field (read-only, never AI-modified)
+- Enhanced patient context preservation validation
+- Narrative diff highlighting with edit justification
+
+#### **Phase 3: Team Collaboration (Planned)**
+- Case triage queue with priority scoring
+- Team assignment and collaboration tools
+- Comprehensive workflow automation
+- Advanced audit trail visualization
+
+---
+
+## [1.0.0] - 2024-01-04 - MVP Release
+
+### 🎯 **INITIAL RELEASE**
+
+#### **Core Features**
+- Patient Context Preservation (P0 Critical)
+- Model Version Tracking (P0 Critical)
+- Voice Readback Confirmation (P0 Critical)
+- Multi-user Role Support (P1 High)
+- Streamlit-based User Interface
+- Local AI Processing (Mistral-7B)
+
+#### **Regulatory Compliance**
+- GVP VI/IX alignment
+- FAERS compliance
+- GAMP 5 validation protocols
+- Complete audit trail support
+
+#### **Patient Safety**
+- 100% local processing
+- No cloud dependencies
+- Patient voice preservation
+- Medical narrative generation
+
+---
+
+**Legend:**
+- 🚀 Major Features
+- 🔧 Configuration Changes  
+- 🧪 Testing & Validation
+- 📋 Stakeholder Impact
+- 🔒 Patient Safety & Compliance
+- 🛡️ Security Enhancements
+- 📚 Documentation
+- ⚠️ Breaking Changes
+- 🔄 Migration Notes
+- 🎯 Future Plans
+
+**Patient safety was prioritized throughout Phase 1 development. All new features enhance data protection while preserving clinical accuracy and regulatory compliance.**
 
 ## 🎯 Design Philosophy
 

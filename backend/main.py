@@ -21,6 +21,7 @@ from .patient_context import create_patient_context_preserver, PatientContext
 from .model_tracking import create_model_tracker, GenerationMetadata
 from .readback import create_readback_confirmer, VoiceCapture, ReadbackSession
 from .users import create_user_manager, UserSession
+from .pii_protection import create_pii_protector, PIIMasker, AccessLogger
 
 logger = logging.getLogger(__name__)
 
@@ -97,6 +98,9 @@ class PVSentinelEngine:
             # Initialize User Manager (P1 High)
             self.user_manager = create_user_manager(self.config)
             
+            # Initialize PII Protection (Phase 1 New Feature)
+            self.pii_masker, self.access_logger = create_pii_protector(self.config)
+            
             # Initialize prompt templates
             self.prompt_templates = self._load_prompt_templates()
             
@@ -159,13 +163,23 @@ class PVSentinelEngine:
             # Step 1: Convert voice to text (placeholder - would use Whisper.cpp)
             voice_capture = self._transcribe_audio(audio_data)
             
-            # Step 2: Extract and preserve patient context (P0 Critical)
+            # Step 2: Log voice access and check for PII (Phase 1 New Feature)
+            self.access_logger.log_pii_access(
+                user_id=user_session.user_id,
+                session_id=user_session_id,
+                data_type="voice_input",
+                data_content=voice_capture.transcribed_text,
+                action="transcribe",
+                context="voice_to_text"
+            )
+            
+            # Step 3: Extract and preserve patient context (P0 Critical)
             patient_context = self.patient_context_preserver.extract_patient_context(
                 voice_capture.transcribed_text, 
                 voice_capture.input_method
             )
             
-            # Step 3: Check if readback confirmation is needed (P0 Critical)
+            # Step 4: Check if readback confirmation is needed (P0 Critical)
             should_readback, readback_reason = self.readback_confirmer.should_trigger_readback(voice_capture)
             
             readback_session = None
@@ -174,14 +188,25 @@ class PVSentinelEngine:
                 # In a real implementation, this would pause for user confirmation
                 logger.info(f"Readback required: {readback_reason}")
             
-            # Step 4: Generate narrative with appropriate template
+            # Step 5: Generate narrative with appropriate template
             narrative_result = self._generate_narrative(
                 patient_context, 
                 user_session_id,
                 readback_session
             )
             
-            # Step 5: Create complete audit record (P0 Critical)
+            # Step 6: Apply PII protection to narrative (Phase 1 New Feature)
+            user_role = user_session.role.value if user_session.role else None
+            protected_narrative, pii_detections = self.pii_masker.mask_pii(
+                narrative_result.get('generated_narrative', ''),
+                user_role=user_role,
+                context="generated_narrative",
+                preserve_patient_context=True
+            )
+            narrative_result['protected_narrative'] = protected_narrative
+            narrative_result['pii_detections'] = len(pii_detections)
+            
+            # Step 7: Create complete audit record (P0 Critical)
             audit_record = self._create_audit_record(
                 patient_context, 
                 narrative_result, 

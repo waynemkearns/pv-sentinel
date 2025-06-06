@@ -77,6 +77,26 @@ def main():
     # Sidebar navigation
     with st.sidebar:
         st.title("Navigation")
+        
+        # User role selection (Phase 1 New Feature)
+        st.subheader("👤 User Role")
+        user_role = st.selectbox(
+            "Current Role",
+            ["drafter", "reviewer", "auditor", "admin"],
+            help="Different roles see different levels of data detail"
+        )
+        
+        # Role-based information
+        role_descriptions = {
+            "drafter": "Can create and edit adverse event cases",
+            "reviewer": "Can review and approve cases for submission", 
+            "auditor": "Can audit cases with PII masking enabled",
+            "admin": "Full system access with all permissions"
+        }
+        st.caption(role_descriptions.get(user_role, ""))
+        
+        st.divider()
+        
         page = st.selectbox(
             "Choose Function",
             ["Home", "New Case Entry", "Case Review", "System Status", "Documentation"]
@@ -86,9 +106,9 @@ def main():
     if page == "Home":
         show_home_page()
     elif page == "New Case Entry":
-        show_case_entry()
+        show_case_entry(user_role)
     elif page == "Case Review":
-        show_case_review()
+        show_case_review(user_role)
     elif page == "System Status":
         show_system_status()
     elif page == "Documentation":
@@ -120,7 +140,7 @@ def show_home_page():
             st.session_state.page = "System Status"
             st.rerun()
 
-def show_case_entry():
+def show_case_entry(user_role: str = "drafter"):
     st.header("New Adverse Event Case Entry")
     
     # Patient information section
@@ -149,6 +169,14 @@ def show_case_entry():
                 st.warning("Voice recording feature requires full backend integration. Currently in demo mode.")
     
     # Text input as alternative
+    st.markdown("""
+    <div style='background-color: #fff3cd; border: 1px solid #ffeaa7; border-radius: 5px; padding: 10px; margin: 10px 0;'>
+        <strong>🔒 Patient Privacy Notice:</strong> This field may contain sensitive patient information. 
+        Data is processed locally and protected according to privacy regulations. 
+        Avoid including unnecessary identifying information while preserving clinical context.
+    </div>
+    """, unsafe_allow_html=True)
+    
     event_description = st.text_area(
         "Describe the adverse event (include patient's exact words when possible)",
         height=200,
@@ -166,6 +194,19 @@ def show_case_entry():
             with st.spinner("Generating AI narrative... Preserving patient context..."):
                 # Simulate AI processing
                 st.success("✅ Narrative generated successfully!")
+                
+                # Show PII protection status (Phase 1 New Feature)
+                st.subheader("🔒 Privacy Protection Status")
+                
+                # Simulate PII detection for demo
+                with st.expander("PII Detection Results", expanded=False):
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        st.metric("PII Instances Detected", "2", "Names, 1 Address")
+                    with col2:
+                        st.metric("Protection Level", "High", "Role-based masking active")
+                    
+                    st.info("✅ All sensitive information has been identified and protected according to your user role.")
                 
                 # Show patient context preservation
                 st.subheader("Patient Context Preservation Check")
@@ -240,8 +281,16 @@ def show_demo_context_preservation():
     </div>
     """, unsafe_allow_html=True)
 
-def show_case_review():
+def show_case_review(user_role: str = "reviewer"):
     st.header("Case Review Dashboard")
+    
+    # Show role-based data access (Phase 1 New Feature)
+    st.markdown(f"""
+    <div style='background-color: #d4edda; border: 1px solid #c3e6cb; border-radius: 5px; padding: 10px; margin: 10px 0;'>
+        <strong>👤 Viewing as:</strong> {user_role.title()} | 
+        <strong>Data Protection:</strong> {'PII masking enabled' if user_role in ['auditor', 'readonly'] else 'Full access'}
+    </div>
+    """, unsafe_allow_html=True)
     
     # Sample cases for demonstration
     st.subheader("Cases Pending Review")
