@@ -22,7 +22,7 @@ try:
     from backend.model_tracking import ModelVersionTracker
     from backend.readback import VoiceReadbackConfirmer
     # Phase 1 imports
-    from backend.pii_protection import create_pii_protection_system
+    from backend.pii_protection import create_pii_protector
     # Phase 2 imports
     from backend.patient_voice import create_patient_voice_protector
     from backend.narrative_comparison import create_narrative_comparison_system
@@ -110,9 +110,20 @@ def main():
         
         st.divider()
         
+        # Check if there's a navigation target from button clicks
+        if "navigation_target" in st.session_state:
+            default_page = st.session_state.navigation_target
+            del st.session_state.navigation_target  # Clear after use
+        else:
+            default_page = "Home"
+        
+        page_options = ["Home", "New Case Entry", "Case Review", "Patient Voice Protection", "Narrative Comparison", "Analytics Dashboard", "Patient Portal", "Accessibility Settings", "System Status", "Documentation"]
+        default_index = page_options.index(default_page) if default_page in page_options else 0
+        
         page = st.selectbox(
             "Choose Function",
-            ["Home", "New Case Entry", "Case Review", "Patient Voice Protection", "Narrative Comparison", "Analytics Dashboard", "Patient Portal", "Accessibility Settings", "System Status", "Documentation"]
+            page_options,
+            index=default_index
         )
     
     # Main content based on selected page
@@ -146,21 +157,21 @@ def show_home_page():
         st.subheader("🏥 For Pharmacovigilance Officers")
         st.write("Create accurate AE narratives with AI assistance while preserving patient context.")
         if st.button("Start New Case", key="pv_officer"):
-            st.session_state.page = "New Case Entry"
+            st.session_state.navigation_target = "New Case Entry"
             st.rerun()
     
     with col2:
         st.subheader("🔍 For Reviewers")
         st.write("Review and validate AI-generated narratives with complete audit trails.")
         if st.button("Review Cases", key="reviewer"):
-            st.session_state.page = "Case Review"
+            st.session_state.navigation_target = "Case Review"
             st.rerun()
     
     with col3:
         st.subheader("⚙️ System Management")
         st.write("Monitor system status and access technical documentation.")
         if st.button("System Status", key="admin"):
-            st.session_state.page = "System Status"
+            st.session_state.navigation_target = "System Status"
             st.rerun()
 
 def show_case_entry(user_role: str = "drafter"):
