@@ -1,4 +1,59 @@
-# PV Sentinel Deployment Guide
+# 🚀 PV Sentinel - Streamlit Community Cloud Deployment Guide
+
+## Quick Deploy to Streamlit Community Cloud
+
+### Prerequisites
+- GitHub account (free)
+- Your PV Sentinel repository pushed to GitHub
+
+### Step-by-Step Deployment
+
+#### 1. Prepare Your Repository
+Ensure these files are in your repository root:
+- ✅ `streamlit_app.py` (main entry point)
+- ✅ `requirements.txt` (dependencies)
+- ✅ `.streamlit/config.toml` (configuration)
+- ✅ `frontend/app.py` (main application)
+- ✅ `backend/` (all backend modules)
+
+#### 2. Deploy to Streamlit Community Cloud
+1. Go to [share.streamlit.io](https://share.streamlit.io)
+2. Click "New app"
+3. Connect your GitHub account
+4. Select your repository: `PV Sentinel`
+5. Set main file: `streamlit_app.py`
+6. Click "Deploy!"
+
+#### 3. Your Live MVP Will Be Available At:
+```
+https://pv-sentinel-[your-username].streamlit.app
+```
+
+### 🎯 Features Available in MVP
+- ✅ Patient Context Preservation
+- ✅ Model Version Tracking  
+- ✅ Voice Readback Confirmation
+- ✅ Patient Voice Protection (Phase 2)
+- ✅ Narrative Comparison (Phase 2)
+- ✅ Enhanced UX & Accessibility (Phase 3)
+- ✅ Analytics Dashboard
+- ✅ Patient Portal
+- ✅ Responsive Design
+
+### 🔧 Troubleshooting
+If deployment fails:
+1. Check that all files are committed to GitHub
+2. Verify `requirements.txt` has all necessary dependencies
+3. Ensure `streamlit_app.py` is in the repository root
+
+### 🔒 Security Note
+For production use with real patient data, upgrade to:
+- **Streamlit for Teams** ($20/month) for password protection
+- **Self-hosted solution** for maximum security compliance
+
+---
+
+**Ready to go live? Your MVP will be accessible to stakeholders worldwide!** 🌍
 
 ## 🚀 Deployment Options
 
