@@ -1,4 +1,13 @@
 import streamlit as st
+
+# Configure Streamlit page FIRST - before any other Streamlit commands
+st.set_page_config(
+    page_title="PV Sentinel",
+    page_icon="🏥",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
 import sys
 import os
 from pathlib import Path
@@ -7,6 +16,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
 
 # Import the correct class names from backend modules
+import_error_message = None
 try:
     from backend.patient_context import PatientContextPreserver
     from backend.model_tracking import ModelVersionTracker
@@ -20,16 +30,9 @@ try:
     from backend.ux_enhancement import create_ux_enhancement_system
     backend_available = True
 except ImportError as e:
-    st.warning(f"Backend modules not fully available: {e}")
+    # Store the error message for later display - don't use st.warning() here
+    import_error_message = f"Backend modules not fully available: {e}"
     backend_available = False
-
-# Configure Streamlit page
-st.set_page_config(
-    page_title="PV Sentinel",
-    page_icon="🏥",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
 
 # Custom CSS for better styling
 st.markdown("""
@@ -64,7 +67,10 @@ def main():
     
     # Backend status indicator
     if not backend_available:
-        st.error("⚠️ Backend modules not fully loaded. Some features may be limited to demo mode.")
+        if import_error_message:
+            st.warning(f"⚠️ {import_error_message}")
+        else:
+            st.error("⚠️ Backend modules not fully loaded. Some features may be limited to demo mode.")
     else:
         st.success("✅ All backend modules loaded successfully")
     
