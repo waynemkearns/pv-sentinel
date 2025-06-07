@@ -2,7 +2,7 @@
   "models": {
     "8cf3a78cc64a1d9952a895d574d82ce37ad3b4328893e97dff9611fe3e52706d": {
       "model_name": "test-model",
-      "model_path": "C:\\Users\\wayne\\AppData\\Local\\Temp\\tmp2e8u6lqk.gguf",
+      "model_path": "C:\\Users\\wayne\\AppData\\Local\\Temp\\tmpg0i0vn0g.gguf",
       "model_hash": "8cf3a78cc64a1d9952a895d574d82ce37ad3b4328893e97dff9611fe3e52706d",
       "model_version": "1.0",
       "quantization": "unknown",
@@ -11,7 +11,7 @@
         "format": ".gguf",
         "estimated_parameters": "7B"
       },
-      "creation_timestamp": "2025-06-04T15:51:18.701487",
+      "creation_timestamp": "2025-06-07T10:35:00.870419",
       "validation_status": "registered",
       "gxp_qualified": false
     }

@@ -1,5 +1,5 @@
 [global]
-dataFrameSerialization = "legacy"
+# dataFrameSerialization setting has been deprecated
 
 [server]
 runOnSave = true
