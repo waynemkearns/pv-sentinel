@@ -269,4 +269,59 @@ performance:
   max_concurrent_users: 10
   response_timeout: 30  # seconds
   cache_enabled: true
-  cache_ttl: 3600  # seconds 
+  cache_ttl: 3600  # seconds
+
+# Phase 4A: Enhanced Analytics & Operational Improvements Configuration
+phase_4a:
+  enhanced_analytics:
+    enabled: true
+    export_enabled: true
+    export_formats: ["pdf", "excel", "csv", "json"]
+    trend_analysis_enabled: true
+    mvp_validation_tracking: true
+    stakeholder_dashboards:
+      medical_director:
+        - "case_processing_time"
+        - "quality_trends"
+        - "safety_signals"
+      operations_manager:
+        - "user_adoption"
+        - "productivity_gains"
+        - "feature_usage"
+      data_analyst:
+        - "data_quality"
+        - "processing_volume"
+        - "error_analysis"
+  
+  operational_improvements:
+    templates:
+      enabled: true
+      max_templates: 100
+      default_templates: true
+      variable_substitution: true
+    
+    bulk_processing:
+      enabled: true
+      max_batch_size: 100
+      concurrent_operations: 3
+      supported_operations: ["export", "assign", "approve", "notification", "update"]
+    
+    quick_actions:
+      enabled: true
+      keyboard_shortcuts: true
+      confirmation_prompts: true
+      role_based_actions: true
+      available_actions:
+        - "assign_reviewer"
+        - "set_priority"
+        - "add_note"
+        - "approve_case"
+        - "export_batch"
+        - "send_notification"
+    
+    enhanced_search:
+      enabled: true
+      max_saved_searches: 50
+      advanced_filters: true
+      auto_suggestions: true
+      search_history: true 
