@@ -1,4 +1,7 @@
-"""
+#!/usr/bin/env python3
+"""Helper script to create narrative comparison module"""
+
+content = '''"""
 PV Sentinel - Narrative Comparison Module
 Critical P0 Feature: Side-by-side comparison with edit tracking and justification
 """
@@ -161,21 +164,21 @@ class NarrativeComparator:
     
     def _initialize_change_patterns(self):
         self.critical_change_patterns = [
-            r'\b(death|died|fatal|life-threatening)\b',
-            r'\b(hospitalization|emergency|ICU)\b',
-            r'\b(serious|severe|critical)\b',
+            r'\\b(death|died|fatal|life-threatening)\\b',
+            r'\\b(hospitalization|emergency|ICU)\\b',
+            r'\\b(serious|severe|critical)\\b',
         ]
         
         self.temporal_change_patterns = [
-            r'\b(\d+)\s*(day|week|month|hour|minute)s?\b',
-            r'\b(immediately|within|after|before|during)\b',
-            r'\b(onset|duration|started|began|stopped)\b',
+            r'\\b(\\d+)\\s*(day|week|month|hour|minute)s?\\b',
+            r'\\b(immediately|within|after|before|during)\\b',
+            r'\\b(onset|duration|started|began|stopped)\\b',
         ]
         
         self.medication_change_patterns = [
-            r'\b(\d+\.?\d*)\s*(mg|ml|g|units?)\b',
-            r'\b(daily|twice|once|every|per)\b',
-            r'\b(increased|decreased|discontinued|started)\b',
+            r'\\b(\\d+\\.?\\d*)\\s*(mg|ml|g|units?)\\b',
+            r'\\b(daily|twice|once|every|per)\\b',
+            r'\\b(increased|decreased|discontinued|started)\\b',
         ]
     
     def compare_narratives(self, version_1: NarrativeVersion, version_2: NarrativeVersion,
@@ -526,3 +529,9 @@ def create_narrative_comparison_system(config: Dict) -> NarrativeVersionManager:
     manager = NarrativeVersionManager(config)
     logger.info("Narrative comparison system initialized")
     return manager
+'''
+
+with open('backend/narrative_comparison.py', 'w', encoding='utf-8') as f:
+    f.write(content.strip())
+
+print("Narrative comparison module created successfully!") 
